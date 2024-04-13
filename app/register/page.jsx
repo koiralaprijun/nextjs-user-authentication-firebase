@@ -33,7 +33,8 @@ const RegisterPage = () => {
           alignItems: "left"
         }}
       >
-        <Typography component="h1" variant="h5">
+         <Typography>Wiki Explorer</Typography>
+        <Typography fontWeight="bold" sx={{ paddingBottom: 1 }} component="h1" variant="h4">
           Sign up
         </Typography>
         <Typography variant="body2">
