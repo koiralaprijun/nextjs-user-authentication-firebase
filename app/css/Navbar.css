@@ -1,0 +1,36 @@
+
+.search-bar {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-bar input {
+    padding: 8px;
+    margin-right: 8px;
+    border: 1px solid #cccccc;
+    color: black;
+    border-radius: 4px;
+    min-width: 350px;
+    max-width: 500px; /* or any width that suits your layout */
+  }
+  
+  .search-bar .search-button {
+    padding: 8px 16px;
+    border: none;
+    background-color: rgb(188, 188, 188);
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .search-bar .dice-button {
+    padding: 8px 16px;
+    background-color: rgb(237, 237, 237);
+    border-radius: 4px;
+    margin-left: 8px; 
+  }
+  
+  .search-bar .dice-button:hover {
+    background-color: rgb(215, 235, 243);
+  }
+  
