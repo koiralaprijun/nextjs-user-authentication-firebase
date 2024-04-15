@@ -13,12 +13,31 @@ import Divider from "@mui/material/Divider"
 
 //Google Authentication Imports
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
-import { auth } from "@/app/firebase/firebaseConfig"
+import { auth } from "/app/firebase/firebaseConfig"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { login } from "../firebase/firebaseConfig"
 
 const LoginPage = () => {
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null)
+
   const handleGoogleAuth = async () => {
     const provider = await new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    try {
+      await login(email, password)
+      router.push("/")
+    } catch (err) {
+      setErrorMessage(err.code)
+    }
   }
 
   return (
@@ -48,12 +67,27 @@ const LoginPage = () => {
         <Divider>
           <Typography variant="overline"> OR </Typography>
         </Divider>
-        <Box component="form" noValidate sx={{ mt: 1 }}>
-          <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus />
-          <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" />
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField margin="normal" required fullWidth onChange={e => setEmail(e.target.value)} id="email" label="Email Address" name="email" autoComplete="email" autoFocus />
+
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            onChange={e => setPassword(e.target.value)}
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
           <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, py: 2, px: 4 }}>
             Log In
           </Button>
+          {errorMessage &&
+            <Typography variant="body2" sx={{ color: "red" }}>
+              {errorMessage}
+            </Typography>}
         </Box>
       </Box>
     </Container>

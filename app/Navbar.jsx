@@ -1,7 +1,15 @@
 import "./css/Navbar.css"
 import { AppBar, Toolbar, Typography, Link, Box } from "@mui/material"
+import Face5Icon from "@mui/icons-material/Face5"
+import Stack from "@mui/material/Stack"
+
+import { useAuth } from "./context/auth"
+import { Fragment } from "react"
+import { logout } from "./firebase/firebaseConfig"
 
 const Navbar = () => {
+  const { currentUser } = useAuth()
+
   return (
     <AppBar
       position="fixed"
@@ -23,9 +31,24 @@ const Navbar = () => {
             Next.JS Authentication
           </Link>
         </Typography>
-        <Link href="/login" className="login" color="primary">
-          Login/Create Account
-        </Link>
+
+        {currentUser
+          ? <Box>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Box sx={{ bgcolor: "#f0f0f0", p: 1, borderRadius: 1, display: "flex", alignItems: "center" }}>
+                  <Face5Icon sx={{ marginRight: 1 }} />
+                  <Typography variant="body1">
+                    {currentUser.firstName}
+                  </Typography>
+                </Box>
+                <Link onClick={logout} style={{ cursor: "pointer" }}>
+                  Logout
+                </Link>
+              </Stack>
+            </Box>
+          : <Link href="/login" className="login" color="primary">
+              Login/Create Account
+            </Link>}
       </Toolbar>
     </AppBar>
   )

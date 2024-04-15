@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, updateProfile } from "firebase/auth"
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1FHDUjG4dLht7tDfz7Hq35aUcJNakrdo",
@@ -11,8 +11,19 @@ const firebaseConfig = {
   measurementId: "G-LHBRQK7T27"
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
+export const auth = getAuth(app)
 
-export { auth, app }
+export const register = (email, firstName, lastName, password) => {
+  return createUserWithEmailAndPassword(auth, email, password).then(response => updateProfile(response.user, { displayName: firstName })).then(() => {
+    signOut(auth) 
+  })
+}
+
+export const login = (email, password) => {
+  return signInWithEmailAndPassword(auth, email, password)
+}
+
+export const logout = () => {
+  return auth.signOut()
+}

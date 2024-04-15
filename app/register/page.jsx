@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useState } from "react"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
 import TextField from "@mui/material/TextField"
@@ -14,12 +15,32 @@ import Divider from "@mui/material/Divider"
 
 ///Google Authentication Imports
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth"
-import { auth } from "@/app/firebase/firebaseConfig"
+import { auth } from "/app/firebase/firebaseConfig"
+
+import { useRouter } from "next/navigation"
+import { register } from "../firebase/firebaseConfig"
 
 const RegisterPage = () => {
-  const handleGoogleAuth = async () => {
-    const provider = await new GoogleAuthProvider()
+  const router = useRouter()
+  const [firstName, setfirstName] = useState("")
+  const [lastName, setlastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  const handleGoogleAuth = () => {
+    const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    try {
+      await register(email, firstName, lastName, password)
+      router.push("/")
+    } catch (err) {
+      setErrorMessage(err.code)
+    }
   }
 
   return (
@@ -33,7 +54,7 @@ const RegisterPage = () => {
           alignItems: "left"
         }}
       >
-         <Typography>Wiki Explorer</Typography>
+        <Typography>Wiki Explorer</Typography>
         <Typography fontWeight="bold" sx={{ paddingBottom: 1 }} component="h1" variant="h4">
           Sign up
         </Typography>
@@ -53,25 +74,38 @@ const RegisterPage = () => {
           <Typography variant="overline"> OR </Typography>
         </Divider>
 
-        <Box component="form" noValidate sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField autoComplete="given-name" name="firstName" required fullWidth id="firstName" label="First Name" autoFocus />
+              <TextField autoComplete="given-name" onChange={e => setfirstName(e.target.value)} name="firstName" required fullWidth id="firstName" label="First Name" autoFocus />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField required fullWidth id="lastName" label="Last Name" name="lastName" autoComplete="family-name" />
+              <TextField required fullWidth id="lastName" onChange={e => setlastName(e.target.value)} label="Last Name" name="lastName" autoComplete="family-name" />
             </Grid>
             <Grid item xs={12}>
-              <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+              <TextField required fullWidth onChange={e => setEmail(e.target.value)} id="email" label="Email Address" name="email" autoComplete="email" />
             </Grid>
 
             <Grid item xs={12}>
-              <TextField required fullWidth name="password" label="Password" type="password" id="password" autoComplete="new-password" />
+              <TextField
+                required
+                fullWidth
+                onChange={e => setPassword(e.target.value)}
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+              />
             </Grid>
           </Grid>
           <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
             Sign Up
           </Button>
+          {errorMessage &&
+            <Typography variant="body2" sx={{ color: "red" }}>
+              {errorMessage}
+            </Typography>}
         </Box>
       </Box>
     </Container>
